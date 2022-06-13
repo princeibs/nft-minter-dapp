@@ -19,7 +19,7 @@ const Cover = ({ name, coverImg, connect }) => {
             <h1>{name}</h1>
             <p>Please connect your wallet to continue.</p>
             <Button
-              onClick={() => connect().catch((e) => console.log(e))}
+              onClick={connect}
               variant="outline-light"
               className="rounded-pill px-3 mt-3"
             >

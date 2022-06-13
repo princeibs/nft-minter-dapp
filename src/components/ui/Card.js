@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Card, Col, Badge, Stack, Row } from "react-bootstrap";
-import { truncateAddress } from "../../../utils";
-import Identicon from "../../ui/Identicon";
+import { truncateAddress } from "../../utils";
+import Identicon from "./Identicon";
 
 const NftCard = ({ nft }) => {
   const { image, description, owner, name, index, attributes } = nft;
@@ -52,7 +52,6 @@ const NftCard = ({ nft }) => {
 };
 
 NftCard.propTypes = {
-
   // props passed into this component
   nft: PropTypes.instanceOf(Object).isRequired,
 };

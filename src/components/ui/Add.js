@@ -2,13 +2,13 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";
-import { uploadToIpfs } from "../../../utils/minter";
+import { uploadToIpfs } from "../../utils/minter";
 
 // basic attributes that can be added to NFT
 const COLORS = ["Red", "Green", "Blue", "Cyan", "Yellow", "Purple"];
 const SHAPES = ["Circle", "Square", "Triangle"];
 
-const AddNfts = ({ save, address }) => {
+const AddNft = ({ save, address }) => {
   const [name, setName] = useState("");
   const [ipfsImage, setIpfsImage] = useState("");
   const [description, setDescription] = useState("");
@@ -207,11 +207,11 @@ const AddNfts = ({ save, address }) => {
   );
 };
 
-AddNfts.propTypes = {
+AddNft.propTypes = {
 
   // props passed into this component
   save: PropTypes.func.isRequired,
   address: PropTypes.string.isRequired,
 };
 
-export default AddNfts;
+export default AddNft;

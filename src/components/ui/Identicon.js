@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Jazzicon from "@metamask/jazzicon";
 
-export default function Identicon({address, size, ...rest}) {
+const Identicon = ({address, size, ...rest}) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -17,3 +17,5 @@ export default function Identicon({address, size, ...rest}) {
     </div>
   )
 }
+
+export default Identicon;

@@ -2,23 +2,21 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
-import AddNfts from "./Add";
-import Nft from "./Card";
-import Loader from "../../ui/Loader";
-import { NotificationSuccess, NotificationError } from "../../ui/Notifications";
+import AddNfts from "../../components/ui/Add";
+import Nft from "../../components/ui/Card";
+import Loader from "../../components/ui/Loader";
 import {
-  getNfts,
-  createNft,
-  fetchNftContractOwner,
-} from "../../../utils/minter";
-import { Row } from "react-bootstrap";
+  NotificationSuccess,
+  NotificationError,
+} from "../../components/ui/Notifications";
+import { getNfts, createNft, fetchNftContractOwner } from "../../utils/minter";
+import "./Market.scss";
 
-const NftList = ({minterContract, name}) => {
-
+const Market = ({ minterContract }) => {
   /* performActions : used to run smart contract interactions in order
-  *  address : fetch the address of the connected wallet
-  */
-  const {performActions, address} = useContractKit();
+   *  address : fetch the address of the connected wallet
+   */
+  const { performActions, address } = useContractKit();
   const [nfts, setNfts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [nftOwner, setNftOwner] = useState(null);
@@ -29,7 +27,7 @@ const NftList = ({minterContract, name}) => {
 
       // fetch all nfts from the smart contract
       const allNfts = await getNfts(minterContract);
-      if (!allNfts) return
+      if (!allNfts) return;
       setNfts(allNfts);
     } catch (error) {
       console.log({ error });
@@ -44,7 +42,7 @@ const NftList = ({minterContract, name}) => {
 
       // create an nft functionality
       await createNft(minterContract, performActions, data);
-      toast(<NotificationSuccess text="Updating NFT list...."/>);
+      toast(<NotificationSuccess text="Updating NFT list...." />);
       getAssets();
     } catch (error) {
       console.log({ error });
@@ -55,7 +53,6 @@ const NftList = ({minterContract, name}) => {
   };
 
   const fetchContractOwner = useCallback(async (minterContract) => {
-
     // get the address that deployed the NFT contract
     const _address = await fetchNftContractOwner(minterContract);
     setNftOwner(_address);
@@ -73,49 +70,50 @@ const NftList = ({minterContract, name}) => {
   }, [minterContract, address, getAssets, fetchContractOwner]);
   if (address) {
     return (
-      <>
+      <div className="app__market">
         {!loading ? (
-          <>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="fs-4 fw-bold mb-0">{name}</h1>
+          <div className="app__market-market">
+            <div className="app__market-heading">
+              <h1 className="app__market-title">Market</h1>
 
               {/* give the add NFT permission to user who deployed the NFT smart contract */}
-              {/* {nftOwner === address ? ( */}
-                  <AddNfts save={addNft} address={address}/>
-              {/* // ) : null} */}
-
+              {nftOwner === address ? (
+                <AddNfts save={addNft} address={address} />
+              ) : null}
             </div>
-            <Row xs={1} sm={2} lg={3} className="g-3  mb-5 g-xl-4 g-xxl-5">
-
+            <div className="app__market-body">
               {/* display all NFTs */}
-              {nfts.map((_nft) => (
+              {nfts.length == 0 ? (
+                <div>No NFT to display at the moment</div>
+              ) : (
+                nfts.map((_nft) => (
                   <Nft
-                      key={_nft.index}
-                      nft={{
-                        ..._nft,
-                      }}
+                    key={_nft.index}
+                    nft={{
+                      ..._nft,
+                    }}
                   />
-              ))}
-            </Row>
-          </>
+                ))
+              )}
+            </div>
+          </div>
         ) : (
           <Loader />
         )}
-      </>
+      </div>
     );
   }
   return null;
 };
 
-NftList.propTypes = {
-
+Market.propTypes = {
   // props passed into this component
   minterContract: PropTypes.instanceOf(Object),
   updateBalance: PropTypes.func.isRequired,
 };
 
-NftList.defaultProps = {
+Market.defaultProps = {
   minterContract: null,
 };
 
-export default NftList;
+export default Market;

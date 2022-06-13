@@ -4,4 +4,4 @@ import GemContractAddress from '../contracts/GemNFT-address.json';
 
 
 // export interface for NFT contract
-export const useGemContract = () => useContract(GemAbi.abi, GemContractAddress.MyNFT);
+export const useGemContract = () => useContract(GemAbi.abi, GemContractAddress.GemNFT);
