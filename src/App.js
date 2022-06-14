@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Notification } from "./components/ui/Notifications";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useContractKit } from "@celo-tools/use-contractkit";
 
 import Navigation from "./container/Navigation/Navigation";
@@ -21,7 +20,7 @@ const App = function AppWrapper() {
   const { address, destroy, connect } = useContractKit();
 
   //  fetch user's celo balance using hook
-  const { balance, getBalance } = useBalance();
+  const { celoBalance, getBalance } = useBalance();
 
   // initialize the NFT mint contract
   const gemContract = useGemContract();
@@ -32,7 +31,7 @@ const App = function AppWrapper() {
       {address ? (
         <>
           <Navigation />
-          <Market updateBalance={getBalance} minterContract={gemContract} />
+          <Market updateBalance={getBalance} gemContract={gemContract} />
         </>
       ) : (
         //  if user wallet is not connected display cover page

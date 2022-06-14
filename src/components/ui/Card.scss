@@ -1,0 +1,83 @@
+.nft-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border: solid 1px rgba(128, 128, 128, 0.542);
+  border-radius: 10px;
+  width: 350px;
+  height: 470px; 
+  margin: .5rem;
+  
+  img {
+    width: 100%;
+    height: 60%;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+}
+
+.nft-details {
+  width: 100%;
+  min-height: 40%;
+}
+
+.nft-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: .25rem 0;
+  font-size: 1.3rem;
+
+  span {
+    color: rgb(98, 1, 98);
+  }
+}
+
+.nft-description {
+  text-align: center;
+  margin: .5rem;
+  font-size: .9rem;
+}
+
+.nft-props {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+
+  .props {
+    border: solid 1px gray;
+    border-radius: 5px;
+    margin: .3rem;
+    padding: 0 .5rem;  
+  }
+}
+
+.card-hr {
+  margin: .5rem 3rem;
+  padding: 0;
+}
+
+.buy-nft {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: .5rem;
+
+  .nft-cost {
+    display: flex;
+
+    img {
+      height: 25px;
+      width: 25px;
+    }
+  }
+
+  .buy-nft-btn {
+    background-color: rgba(0, 128, 0, 0.649);
+    padding: .5rem 1.5rem;
+    border-radius: 5px;
+  }
+}

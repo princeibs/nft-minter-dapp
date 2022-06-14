@@ -2,17 +2,12 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
-import AddNfts from "../../components/ui/Add";
 import Nft from "../../components/ui/Card";
 import Loader from "../../components/ui/Loader";
-import {
-  NotificationSuccess,
-  NotificationError,
-} from "../../components/ui/Notifications";
-import { getNfts, createNft, fetchNftContractOwner } from "../../utils/minter";
+import { getNfts, fetchNftContractOwner } from "../../utils/minter";
 import "./Market.scss";
 
-const Market = ({ minterContract }) => {
+const Market = ({ gemContract }) => {
   /* performActions : used to run smart contract interactions in order
    *  address : fetch the address of the connected wallet
    */
@@ -26,7 +21,7 @@ const Market = ({ minterContract }) => {
       setLoading(true);
 
       // fetch all nfts from the smart contract
-      const allNfts = await getNfts(minterContract);
+      const allNfts = await getNfts(gemContract);
       if (!allNfts) return;
       setNfts(allNfts);
     } catch (error) {
@@ -34,40 +29,29 @@ const Market = ({ minterContract }) => {
     } finally {
       setLoading(false);
     }
-  }, [minterContract]);
+  }, [gemContract]);
 
-  const addNft = async (data) => {
-    try {
-      setLoading(true);
-
-      // create an nft functionality
-      await createNft(minterContract, performActions, data);
-      toast(<NotificationSuccess text="Updating NFT list...." />);
-      getAssets();
-    } catch (error) {
-      console.log({ error });
-      toast(<NotificationError text="Failed to create an NFT." />);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchContractOwner = useCallback(async (minterContract) => {
+  const fetchContractOwner = useCallback(async (gemContract) => {
     // get the address that deployed the NFT contract
-    const _address = await fetchNftContractOwner(minterContract);
+    const _address = await fetchNftContractOwner(gemContract);
     setNftOwner(_address);
   }, []);
 
   useEffect(() => {
     try {
-      if (address && minterContract) {
+      if (address && gemContract) {
         getAssets();
-        fetchContractOwner(minterContract);
+        fetchContractOwner(gemContract);
       }
     } catch (error) {
       console.log({ error });
     }
-  }, [minterContract, address, getAssets, fetchContractOwner]);
+  }, [gemContract, address, getAssets, fetchContractOwner]);
+
+  // useEffect(() => {
+  //   getAssets();
+  // }, []);
+
   if (address) {
     return (
       <div className="app__market">
@@ -75,15 +59,14 @@ const Market = ({ minterContract }) => {
           <div className="app__market-market">
             <div className="app__market-heading">
               <h1 className="app__market-title">Market</h1>
-
-              {/* give the add NFT permission to user who deployed the NFT smart contract */}
+              {/* give the add NFT permission to user who deployed the NFT smart contract
               {nftOwner === address ? (
                 <AddNfts save={addNft} address={address} />
-              ) : null}
+              ) : null} */}
             </div>
             <div className="app__market-body">
               {/* display all NFTs */}
-              {nfts.length == 0 ? (
+              {nfts.length === 0 ? (
                 <div>No NFT to display at the moment</div>
               ) : (
                 nfts.map((_nft) => (
@@ -108,12 +91,12 @@ const Market = ({ minterContract }) => {
 
 Market.propTypes = {
   // props passed into this component
-  minterContract: PropTypes.instanceOf(Object),
+  gemContract: PropTypes.instanceOf(Object),
   updateBalance: PropTypes.func.isRequired,
 };
 
 Market.defaultProps = {
-  minterContract: null,
+  gemContract: null,
 };
 
 export default Market;

@@ -38,7 +38,9 @@ contract GemNFT is ERC721URIStorage, Ownable {
         bool claimed;
     }
 
-    constructor() ERC721("Gems Collection", "GEM") {}
+    constructor() ERC721("Gems Collection", "GEM") {
+        pointsBalance[msg.sender] = 500; // credit owner with 500 points
+    }
 
     // create a MarketToken
     function createMarketToken(uint256 tokenId, uint256 tokenValue) private {

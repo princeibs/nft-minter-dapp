@@ -3,8 +3,8 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import Wallet from "../../components/wallet";
-import { useBalance } from "../../hooks";
+import Wallet from "../../components/wallet/Wallet";
+import { useBalance, useGemContract } from "../../hooks";
 import "./Navigation.scss";
 
 const Navigation = () => {
@@ -13,10 +13,12 @@ const Navigation = () => {
     destroy: terminate connection to user wallet
     connect : connect to the celo blockchain
      */
-  const { address, destroy, connect } = useContractKit();
+  const { address, destroy, kit } = useContractKit();
 
   //  fetch user's celo balance using hook
-  const { balance, getBalance } = useBalance();
+  const { celoBalance, pointsBalance } = useBalance();
+  const { defaultAccount } = kit;
+
 
   return (
     <div className="app__nav">
@@ -33,13 +35,20 @@ const Navigation = () => {
         <Link to="profile">
           <div className="app__nav-item">Profile</div>
         </Link>
+        {console.log("df -> " + defaultAccount)}
+        {defaultAccount && (
+          <Link to="mint">
+            <div className="app__nav-item mint-btn">Mint</div>
+          </Link>
+        )}
       </div>
       <Nav className="app__nav-more">
         <Nav.Item>
           {/*display user wallet*/}
           <Wallet
             address={address}
-            amount={balance.CELO}
+            amount={celoBalance.CELO}
+            points={pointsBalance}
             symbol="CELO"
             destroy={destroy}
           />

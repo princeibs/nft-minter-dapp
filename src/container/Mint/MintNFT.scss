@@ -1,0 +1,19 @@
+.app__mint {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.app__mint-main {
+  border: solid 1px gray;
+  border-radius: 10px;
+  height: 700px;
+  width: 450px;
+}
+
+.mint-img {
+  height: 50%;
+  background-color: rgba(128, 128, 128, 0.772);
+}

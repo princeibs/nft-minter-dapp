@@ -1,53 +1,45 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Card, Col, Badge, Stack, Row } from "react-bootstrap";
-import { truncateAddress } from "../../utils";
-import Identicon from "./Identicon";
+import { useContractKit } from "@celo-tools/use-contractkit";
+import coinImg from "../../assets/img/coin_img.png";
+import "./Card.scss";
 
 const NftCard = ({ nft }) => {
-  const { image, description, owner, name, index, attributes } = nft;
+  const { index, seller, value, name, image, description, properties } = nft;
+  const { kit } = useContractKit();
+  const { defaultAccount } = kit;
 
   return (
-    <Col key={index}>
-      <Card className=" h-100">
-        <Card.Header>
-          <Stack direction="horizontal" gap={2}>
-            <Identicon address={owner} size={28} />
-            <span className="font-monospace text-secondary">
-              {truncateAddress(owner)}
-            </span>
-            <Badge bg="secondary" className="ms-auto">
-              {index} ID
-            </Badge>
-          </Stack>
-        </Card.Header>
-
-        <div className=" ratio ratio-4x3">
-          <img src={image} alt={description} style={{ objectFit: "cover" }} />
-        </div>
-
-        <Card.Body className="d-flex  flex-column text-center">
-          <Card.Title>{name}</Card.Title>
-          <Card.Text className="flex-grow-1">{description}</Card.Text>
-          <div>
-            <Row className="mt-2">
-              {attributes.map((attribute, key) => (
-                <Col key={key}>
-                  <div className="border rounded bg-light">
-                    <div className="text-secondary fw-lighter small text-capitalize">
-                      {attribute.trait_type}
-                    </div>
-                    <div className="text-secondary text-capitalize font-monospace">
-                      {attribute.value}
-                    </div>
-                  </div>
-                </Col>
-              ))}
-            </Row>
+    <>
+      <div className="nft-card">
+        <img src={image} />
+        <div className="nft-details">
+          <div className="nft-title">
+            {name} (<span>#{index}</span>)
           </div>
-        </Card.Body>
-      </Card>
-    </Col>
+          <div className="nft-description">{description}</div>
+          <div className="nft-props">
+            {properties?.map((prop) => (
+              <div className="props">{prop.value}</div>
+            ))}
+          </div>
+          <hr className="card-hr" />
+          <div className="buy-nft">
+            <div className="nft-cost">
+              <span>
+                <img src={coinImg} />
+              </span>
+              {value}
+            </div>
+            {seller == defaultAccount ? (
+              <div>Owned</div>
+            ) : (
+              <div className="buy-nft-btn">Buy</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

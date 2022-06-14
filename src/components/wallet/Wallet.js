@@ -3,7 +3,7 @@ import { Dropdown, Stack, Spinner } from "react-bootstrap";
 import { formatBigNumber, truncateAddress } from "../../utils";
 import Identicon from "../ui/Identicon";
 
-const Wallet = ({ address, amount, symbol, destroy }) => {
+const Wallet = ({ address, amount, points, symbol, destroy }) => {
   if (address) {
     return (
       <>
@@ -17,7 +17,7 @@ const Wallet = ({ address, amount, symbol, destroy }) => {
             {amount ? (
               <>
                 {formatBigNumber(amount)}{" "}
-                <span className="ms-1"> {symbol}</span>
+                <span className="ms-1"> {symbol}</span>|<span>{points} PTS</span>
               </>
             ) : (
               <Spinner animation="border" size="sm" className="opacity-25" />
