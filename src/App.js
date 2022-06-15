@@ -20,7 +20,7 @@ const App = function AppWrapper() {
   const { address, destroy, connect } = useContractKit();
 
   //  fetch user's celo balance using hook
-  const { celoBalance, getBalance } = useBalance();
+  const { getBalance } = useBalance();
 
   // initialize the NFT mint contract
   const gemContract = useGemContract();
@@ -30,7 +30,7 @@ const App = function AppWrapper() {
       <Notification />
       {address ? (
         <>
-          <Navigation />
+          <Navigation gemContract={gemContract} />
           <Market updateBalance={getBalance} gemContract={gemContract} />
         </>
       ) : (

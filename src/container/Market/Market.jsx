@@ -2,6 +2,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router";
 import Nft from "../../components/ui/Card";
 import Loader from "../../components/ui/Loader";
 import { getNfts, fetchNftContractOwner } from "../../utils/minter";
@@ -11,7 +12,10 @@ const Market = ({ gemContract }) => {
   /* performActions : used to run smart contract interactions in order
    *  address : fetch the address of the connected wallet
    */
-  const { performActions, address } = useContractKit();
+  const { performActions, address, kit } = useContractKit();
+  const {defaultAccount} = kit;
+  const navigate = useNavigate();
+
   const [nfts, setNfts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [nftOwner, setNftOwner] = useState(null);
@@ -48,9 +52,14 @@ const Market = ({ gemContract }) => {
     }
   }, [gemContract, address, getAssets, fetchContractOwner]);
 
-  // useEffect(() => {
-  //   getAssets();
-  // }, []);
+  const buyToken = async (tokenId, gemValue) => {
+    const coinsBalance = await gemContract.methods.getPointsBalance().call();
+    if (coinsBalance < gemValue) {
+      navigate("/buy-coins");
+      return;
+    };
+    const txn = gemContract.methods.buyToken(Number(tokenId)).send({from: defaultAccount})  
+  };
 
   if (address) {
     return (
@@ -59,10 +68,6 @@ const Market = ({ gemContract }) => {
           <div className="app__market-market">
             <div className="app__market-heading">
               <h1 className="app__market-title">Market</h1>
-              {/* give the add NFT permission to user who deployed the NFT smart contract
-              {nftOwner === address ? (
-                <AddNfts save={addNft} address={address} />
-              ) : null} */}
             </div>
             <div className="app__market-body">
               {/* display all NFTs */}
@@ -71,10 +76,11 @@ const Market = ({ gemContract }) => {
               ) : (
                 nfts.map((_nft) => (
                   <Nft
-                    key={_nft.index}
+                    key={_nft.tokenId}
                     nft={{
                       ..._nft,
                     }}
+                    buyToken={buyToken}
                   />
                 ))
               )}

@@ -14,10 +14,12 @@
 .app__market-heading {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;  
+  justify-content: center 
 }
 
 .app__market-body {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }

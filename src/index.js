@@ -6,7 +6,7 @@ import {
   NetworkNames,
 } from "@celo-tools/use-contractkit";
 import App from "./App";
-import { Game, Profile, MintNFT } from "./container";
+import { Game, Profile, MintNFT, BuyPoints } from "./container";
 import reportWebVitals from "./reportWebVitals";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -37,6 +37,7 @@ ReactDOM.render(
           <Route path="/play" element={<Game />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/mint" element={<MintNFT /> } />
+          <Route path="/buy-coins" element={<BuyPoints/>} />
         </Routes>
       </Router>
     </ContractKitProvider>

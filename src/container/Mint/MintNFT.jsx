@@ -6,7 +6,7 @@ import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";
 import { uploadToIpfs } from "../../utils/minter";
 import { useGemContract } from "../../hooks";
 import BigNumber from "big-number/big-number";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Loader from "../../components/ui/Loader";
 import {
   NotificationSuccess,

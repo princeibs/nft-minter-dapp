@@ -16,7 +16,7 @@ export const createNft = async (
 
     // convert NFT metadata to JSON format
     const data = JSON.stringify({
-      name,      
+      name,
       description,
       image: ipfsImage,
       owner: defaultAccount,
@@ -30,13 +30,13 @@ export const createNft = async (
       // IPFS url for uploaded metadata
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
 
-      console.log("Gem Value -> " + gemValue)
+      console.log("Gem Value -> " + gemValue);
       // mint the NFT and save the IPFS url to the blockchain
       let transaction = await minterContract.methods
         .mintToken(url, gemValue)
         .send({ from: defaultAccount });
 
-        // console.log("txn -> " + JSON.stringify(transaction, null, 4))
+      // console.log("txn -> " + JSON.stringify(transaction, null, 4))
       return transaction;
     } catch (error) {
       console.log("Error uploading file: ", error);
@@ -59,64 +59,66 @@ export const uploadToIpfs = async (e) => {
 };
 
 // fetch all NFTs on the smart contract
-// export const getNfts = async (minterContract) => {
-//   try {
-//     const nfts = [];
-//     // console.log("before call ...")
-//     const tokensLength = await minterContract.methods.getTokensLength().call();    
-//     // console.log("tokenslength -> " + tokensLength)
-//     for (let i = 0; i < Number(tokensLength); i++) {
-//       const nft = await new Promise(async (resolve, reject) => {
-//         const res = await minterContract.methods.tokenURI(i).call();
-//         const meta = await fetchNftMeta(res);
-//         const owner = await fetchNftOwner(minterContract, i);
-//         resolve({
-//           index: i,
-//           owner,
-//           name: meta.data.name,
-//           image: meta.data.image,
-//           description: meta.data.description,
-//           properties: meta.data.properties,
-//         });
-//       });
-//       console.log("nft -> " + JSON.stringify(nft, null, 4))
-//       nfts.push(nft);
-//     }    
-//     return await Promise.all(nfts);
-//   } catch (e) {
-//     console.log({ e });
-//   }
-// };
-
 export const getNfts = async (minterContract) => {
   try {
+    console.log("before call ...");
     const data = await minterContract.methods.getAllMarketTokens().call();
-    const tokens = await Promise.all(data.map(async token => {
-      const tokenUri = await minterContract.methods.tokenURI(token.tokenId).call();
-      const meta = await fetchNftMeta(tokenUri);
-      return {
-        index: Number(token.tokenId),
-        value: Number(token.value),
-        owner: token.owner,
-        seller: token.seller,
-        claimed: token.claimed,
-        name: meta.data.name,
-        image: meta.data.image,
-        description: meta.data.description,
-        properties: meta.data.properties,
-      }
-    }))
+    console.log("len -> " + data.length);
+    const tokens = await Promise.all(
+      data.map(async (token) => {
+        const tokenUri = await minterContract.methods
+          .tokenURI(token.tokenId)
+          .call();
+        const meta = await fetchNftMeta(tokenUri);
+        return {
+          tokenId: Number(token.tokenId),
+          value: Number(token.value),
+          owner: token.owner,
+          seller: token.seller,
+          claimed: token.claimed,
+          name: meta.data.name,
+          image: meta.data.image,
+          description: meta.data.description,
+          properties: meta.data.properties,
+        };
+      })
+    );
     return tokens;
   } catch (e) {
     console.log(e);
   }
-}
+};
+
+// fetch all my tokens
+export const getMyTokens = async (minterContract) => {
+  try {
+    const res = await minterContract.methods.getMyTokens().call();
+    const tokens = await Promise.all(
+      res.map(async (tokenId) => {
+        const tokenUri = await minterContract.methods.tokenURI(tokenId).call();
+        const meta = await fetchNftMeta(tokenUri);
+        return {
+          tokenId: Number(tokenId),
+          name: meta.data.name,
+          image: meta.data.image,
+          description: meta.data.description,
+          properties: meta.data.properties,
+        };
+      })
+    );
+    console.log("mytkns -> " + JSON.stringify(tokens, null, 4))
+    return tokens;
+  } catch (e) {
+    console.log("getmytokensErr -> " + e);
+    console.log("errrrrrrrrrr")
+  }
+};
 
 // get the metedata for an NFT from IPFS
 export const fetchNftMeta = async (ipfsUrl) => {
   try {
     if (!ipfsUrl) return null;
-    // console.log("Before axios -> " + ipfsUrl);  
+    // console.log("Before axios -> " + ipfsUrl);
     const meta = await axios.get(ipfsUrl);
     // console.log("After axios -> " + meta);
     return meta;

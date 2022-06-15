@@ -5,13 +5,14 @@ import { useGemContract } from "../hooks";
 export const useBalance = () => {
   const { address, kit } = useContractKit();
   const [celoBalance, setCeloBalance] = useState(0);
-  const [pointsBalance, setPointsBalance] = useState(0);
+  const [pointsBalance, setPointsBalance] = useState(1);
   const gemContract = useGemContract();
 
   const getBalance = useCallback(async () => {
     // fetch a connected wallet token balance
     const balance = await kit.getTotalBalance(address);
     const points = await gemContract?.methods.getPointsBalance().call();
+    // const points = 99;
 
     setCeloBalance(balance);
     setPointsBalance(points)
@@ -21,6 +22,7 @@ export const useBalance = () => {
     if (address) getBalance();
   }, [address, getBalance]);
 
+  // console.log("pts bal -> " + pointsBalance)
   return {
     celoBalance,
     pointsBalance,

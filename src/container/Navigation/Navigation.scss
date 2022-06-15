@@ -1,13 +1,15 @@
 .app__nav {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   margin-bottom: 2rem;
   border-bottom: solid 1px rgba(128, 128, 128, 0.393);
 }
 
 .app__nav-list {
   display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .app__title {
@@ -15,10 +17,14 @@
   margin-left: 3rem;
   font-size: 3rem;
   font-weight: 3rem;
-  text-decoration: none !important;
+  color: purple;
 
   &:hover {
     background-color: yellow;
+  }
+
+  a {
+    text-decoration: none;
   }
 }
 
@@ -26,13 +32,16 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: center;
   margin: 1rem;
-  font-size: 1.1rem;
-  text-decoration: none !important;
 
   &:hover {
     color: purple;
     background-color: red;
+  }
+
+  a {
+    text-decoration: none;
   }
 }
 
@@ -41,5 +50,12 @@
   padding: 0 .5rem;
   border-radius: 5px;
   background-color: gray;
-  color: white;
+  
+  a {
+    color: white;
+  }
+}
+
+.app__nav-more {
+  margin-right: 1rem;
 }

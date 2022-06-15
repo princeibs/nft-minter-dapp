@@ -79,5 +79,12 @@
     background-color: rgba(0, 128, 0, 0.649);
     padding: .5rem 1.5rem;
     border-radius: 5px;
+    color: white;
+    cursor: pointer;
+
+    &:active {
+      color: rgba(0, 128, 0, 0.649);
+      background-color: white;
+    }
   }
 }

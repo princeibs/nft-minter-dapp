@@ -4,8 +4,8 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import coinImg from "../../assets/img/coin_img.png";
 import "./Card.scss";
 
-const NftCard = ({ nft }) => {
-  const { index, seller, value, name, image, description, properties } = nft;
+const NftCard = ({ nft, buyToken }) => {
+  const { tokenId, seller, value, name, image, description, properties } = nft;
   const { kit } = useContractKit();
   const { defaultAccount } = kit;
 
@@ -15,7 +15,7 @@ const NftCard = ({ nft }) => {
         <img src={image} />
         <div className="nft-details">
           <div className="nft-title">
-            {name} (<span>#{index}</span>)
+            {name} (<span>#{tokenId}</span>)
           </div>
           <div className="nft-description">{description}</div>
           <div className="nft-props">
@@ -34,7 +34,12 @@ const NftCard = ({ nft }) => {
             {seller == defaultAccount ? (
               <div>Owned</div>
             ) : (
-              <div className="buy-nft-btn">Buy</div>
+              <div
+                className="buy-nft-btn"
+                onClick={() => buyToken(tokenId, value)}
+              >
+                Buy
+              </div>
             )}
           </div>
         </div>

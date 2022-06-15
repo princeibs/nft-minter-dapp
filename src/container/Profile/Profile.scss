@@ -1,0 +1,28 @@
+.app__profile-subtitle {
+  font-size: 1.5rem;
+  margin-left: 1rem;
+}
+
+.hr__class {
+  width: 200px;
+  margin: 0 1rem;  
+}
+
+.sell-nft {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .sell-nft-btn {
+    background-color: rgba(0, 128, 0, 0.649);
+    padding: .5rem 1.5rem;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+
+    &:active {
+      color: rgba(0, 128, 0, 0.649);
+      background-color: white;
+    }
+  }
+}
