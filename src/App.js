@@ -17,7 +17,7 @@ const App = function AppWrapper() {
     destroy: terminate connection to user wallet
     connect : connect to the celo blockchain
      */
-  const { address, destroy, connect } = useContractKit();
+  const { address, connect } = useContractKit();
 
   //  fetch user's celo balance using hook
   const { getBalance } = useBalance();
@@ -30,7 +30,7 @@ const App = function AppWrapper() {
       <Notification />
       {address ? (
         <>
-          <Navigation gemContract={gemContract} />
+          <Navigation  gemContract={gemContract} />
           <Market updateBalance={getBalance} gemContract={gemContract} />
         </>
       ) : (

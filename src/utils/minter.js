@@ -6,7 +6,7 @@ const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 // mint an NFT
 export const createNft = async (
-  minterContract,
+  gemContract,
   performActions,
   { name, gemValue, description, ipfsImage, properties }
 ) => {
@@ -31,12 +31,11 @@ export const createNft = async (
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
 
       console.log("Gem Value -> " + gemValue);
-      // mint the NFT and save the IPFS url to the blockchain
-      let transaction = await minterContract.methods
+      // mint the NFT and save the IPFS url toexport {default as BuyPoints} from "./BuyCoins/BuyCoins" the blockchain
+      let transaction = await gemContract.methods
         .mintToken(url, gemValue)
         .send({ from: defaultAccount });
 
-      // console.log("txn -> " + JSON.stringify(transaction, null, 4))
       return transaction;
     } catch (error) {
       console.log("Error uploading file: ", error);
@@ -59,14 +58,14 @@ export const uploadToIpfs = async (e) => {
 };
 
 // fetch all NFTs on the smart contract
-export const getNfts = async (minterContract) => {
+export const getNfts = async (gemContract) => {
   try {
     console.log("before call ...");
-    const data = await minterContract.methods.getAllMarketTokens().call();
+    const data = await gemContract.methods.getAllMarketTokens().call();
     console.log("len -> " + data.length);
     const tokens = await Promise.all(
       data.map(async (token) => {
-        const tokenUri = await minterContract.methods
+        const tokenUri = await gemContract.methods
           .tokenURI(token.tokenId)
           .call();
         const meta = await fetchNftMeta(tokenUri);
@@ -90,12 +89,12 @@ export const getNfts = async (minterContract) => {
 };
 
 // fetch all my tokens
-export const getMyTokens = async (minterContract) => {
+export const getMyTokens = async (gemContract) => {
   try {
-    const res = await minterContract.methods.getMyTokens().call();
+    const res = await gemContract.methods.getMyTokens().call();
     const tokens = await Promise.all(
       res.map(async (tokenId) => {
-        const tokenUri = await minterContract.methods.tokenURI(tokenId).call();
+        const tokenUri = await gemContract.methods.tokenURI(tokenId).call();
         const meta = await fetchNftMeta(tokenUri);
         return {
           tokenId: Number(tokenId),
@@ -128,18 +127,18 @@ export const fetchNftMeta = async (ipfsUrl) => {
 };
 
 // get the owner address of an NFT
-export const fetchNftOwner = async (minterContract, index) => {
+export const fetchNftOwner = async (gemContract, index) => {
   try {
-    return await minterContract.methods.ownerOf(index).call();
+    return await gemContract.methods.ownerOf(index).call();
   } catch (e) {
     console.log({ e });
   }
 };
 
 // get the address that deployed the NFT contract
-export const fetchNftContractOwner = async (minterContract) => {
+export const fetchNftContractOwner = async (gemContract) => {
   try {
-    let owner = await minterContract.methods.owner().call();
+    let owner = await gemContract.methods.owner().call();
     return owner;
   } catch (e) {
     console.log({ e });

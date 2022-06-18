@@ -1,11 +1,62 @@
+.app__profile {
+  min-height: 85vh;
+}
+
+.app__profile-profile {
+  margin: 2rem 5rem;
+  display: flex;  
+  align-items: flex-end;
+
+  * {
+    letter-spacing: 2px;
+  }
+
+  &>div {
+    margin: 0 2.5rem;
+  }
+}
+
+.profile-claim-btn {
+  background-color: green;
+  border-radius: 10px;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+
+  &:active {
+    background-color: rgba(0, 128, 0, 0.544);
+  }
+
+  &:hover {
+    color: yellow;
+  }
+}
+
 .app__profile-subtitle {
   font-size: 1.5rem;
   margin-left: 1rem;
 }
 
 .hr__class {
-  width: 200px;
-  margin: 0 1rem;  
+  width: 90vw;
+  margin: auto;
+}
+
+.my-nfts {
+  margin: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.no-nft-msg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  color: gray;
+  margin-top: 1rem;
 }
 
 .sell-nft {

@@ -1,9 +1,11 @@
 import React from "react";
 import { Dropdown, Stack, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router";
 import { formatBigNumber, truncateAddress } from "../../utils";
 import Identicon from "../ui/Identicon";
 
-const Wallet = ({ address, amount, points, symbol, destroy }) => {
+const Wallet = ({ address, amount, coins, symbol, destroy }) => {
+  const navigate = useNavigate();
   if (address) {
     return (
       <>
@@ -17,7 +19,7 @@ const Wallet = ({ address, amount, points, symbol, destroy }) => {
             {amount ? (
               <>
                 {formatBigNumber(amount)}{" "}
-                <span className="ms-1"> {symbol}</span>|<span>{points} PTS</span>
+                <span className="ms-1"> {symbol}</span>|<span>{coins} Coins</span>
               </>
             ) : (
               <Spinner animation="border" size="sm" className="opacity-25" />
@@ -43,6 +45,7 @@ const Wallet = ({ address, amount, points, symbol, destroy }) => {
               className="d-flex align-items-center"
               onClick={() => {
                 destroy();
+                navigate("/")
               }}
             >
               <i className="bi bi-box-arrow-right me-2 fs-4" />

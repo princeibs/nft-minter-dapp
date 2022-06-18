@@ -16,20 +16,17 @@ const Navigation = () => {
   const { address, destroy, kit } = useContractKit();
 
   //  fetch user's celo balance using hook
-  const { celoBalance, pointsBalance } = useBalance();
-  const { defaultAccount } = kit;
+  const { celoBalance, coinsBalance } = useBalance();
 
   return (
     <div className="app__nav">
       <div className="app__nav-list">
         <div className="app__title">
-          <Link to="/">GEM</Link>
+          <Link to="/">MultaVerse</Link>
+          <div className="app__title-subtitle">A Multi-MetaVerse</div>
         </div>
         <div className="app__nav-item">
           <Link to="/">Market</Link>
-        </div>
-        <div className="app__nav-item">
-          <Link to="/play">Play</Link>
         </div>
         <div className="app__nav-item">
           <Link to="/profile">Profile</Link>
@@ -44,7 +41,7 @@ const Navigation = () => {
           <Wallet
             address={address}
             amount={celoBalance.CELO}
-            points={pointsBalance}
+            coins={coinsBalance}
             symbol="CELO"
             destroy={destroy}
           />

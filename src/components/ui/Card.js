@@ -20,7 +20,10 @@ const NftCard = ({ nft, buyToken }) => {
           <div className="nft-description">{description}</div>
           <div className="nft-props">
             {properties?.map((prop) => (
-              <div className="props">{prop.value}</div>
+              <div className="props">
+                <div className="props-type">{prop.trait_type}</div>
+                <div className="props-value">{prop.value}</div>
+              </div>
             ))}
           </div>
           <hr className="card-hr" />

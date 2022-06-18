@@ -1,5 +1,6 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import React, { useEffect, useState, useCallback } from "react";
+import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router";
@@ -7,13 +8,14 @@ import Nft from "../../components/ui/Card";
 import Loader from "../../components/ui/Loader";
 import { getNfts, fetchNftContractOwner } from "../../utils/minter";
 import "./Market.scss";
+import { ERC20_DECIMALS } from "../../utils/constants";
 
-const Market = ({ gemContract }) => {
+const Market = ({ gemContract, updateBalance }) => {
   /* performActions : used to run smart contract interactions in order
    *  address : fetch the address of the connected wallet
    */
-  const { performActions, address, kit } = useContractKit();
-  const {defaultAccount} = kit;
+  const { address, kit } = useContractKit();
+  const { defaultAccount } = kit;
   const navigate = useNavigate();
 
   const [nfts, setNfts] = useState([]);
@@ -45,6 +47,7 @@ const Market = ({ gemContract }) => {
     try {
       if (address && gemContract) {
         getAssets();
+        updateBalance();
         fetchContractOwner(gemContract);
       }
     } catch (error) {
@@ -53,12 +56,22 @@ const Market = ({ gemContract }) => {
   }, [gemContract, address, getAssets, fetchContractOwner]);
 
   const buyToken = async (tokenId, gemValue) => {
-    const coinsBalance = await gemContract.methods.getPointsBalance().call();
+    let txn;
+    const coinsBalance = await gemContract.methods.getCoinsBalance().call();
+    const value = new BigNumber(gemValue / 100)
+      .shiftedBy(ERC20_DECIMALS)
+      .toString();
     if (coinsBalance < gemValue) {
-      navigate("/buy-coins");
-      return;
-    };
-    const txn = gemContract.methods.buyToken(Number(tokenId)).send({from: defaultAccount})  
+      txn = await gemContract.methods
+        .buyTokenWithFund(tokenId)
+        .send({ from: defaultAccount, value: value });
+    } else {
+      txn = await gemContract.methods
+        .buyTokenWithCoins(tokenId)
+        .send({ from: defaultAccount });
+    }
+    getAssets();
+    navigate("/");
   };
 
   if (address) {
