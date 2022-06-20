@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Identicon from "../../components/ui/Identicon";
 import Navigation from "../Navigation/Navigation";
-import { useGemContract, useBalance } from "../../hooks";
+import { useNftContract, useBalance } from "../../hooks";
 import { useContractKit } from "@celo-tools/use-contractkit";
-import contractAddress from "../../contracts/GemNFT-address.json";
+import contractAddress from "../../contracts/MultaVerse-address.json";
 import Loader from "../../components/ui/Loader";
 import { getMyTokens, getNfts } from "../../utils/minter";
 import "./Profile.scss";
@@ -26,15 +26,19 @@ const NftCard = ({ nft, btnText, handleClick }) => {
             <div className="props">{prop.value}</div>
           ))}
         </div>
-        <hr className="card-hr" />
-        <div className="sell-nft">
-          <div
-            onClick={() => handleClick(tokenId, value)}
-            className="sell-nft-btn"
-          >
-            {btnText}
+        {btnText && (
+          <div>
+            <hr className="card-hr" />
+            <div className="sell-nft">
+              <div
+                onClick={() => handleClick(tokenId, value)}
+                className="sell-nft-btn"
+              >
+                {btnText}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -46,7 +50,7 @@ const Profile = () => {
   const [contractBalance, setContractBalance] = useState(0);
   const [nfts, setNfts] = useState([]);
   const [marketTokens, setMarketTokens] = useState([]);
-  const gemContract = useGemContract();
+  const nftContract = useNftContract();
   const { celoBalance, coinsBalance } = useBalance();
   const { kit } = useContractKit();
   const { defaultAccount } = kit;
@@ -55,8 +59,8 @@ const Profile = () => {
     try {
       setLoading(true);
       // fetch all nfts from the smart contract
-      const allNfts = await getMyTokens(gemContract);
-      const allMarketTokens = await getNfts(gemContract);
+      const allNfts = await getMyTokens(nftContract);
+      const allMarketTokens = await getNfts(nftContract);
       if (!(allNfts && allMarketTokens)) return;
       setNfts(allNfts);
       setMarketTokens(allMarketTokens);
@@ -65,20 +69,20 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
-  }, [gemContract]);
+  }, [nftContract]);
 
   const getTotalTokensMinted = async () => {
-    const tokens = await gemContract?.methods.getTokensLength().call();
+    const tokens = await nftContract?.methods.getTokensLength().call();
     setTokensLength(tokens);
   };
 
   const getContractBalance = async () => {
-    const txn = await gemContract.methods.contractBalance().call();
+    const txn = await nftContract.methods.contractBalance().call();
     setContractBalance(txn);
   };
 
   const claimContractFunds = async () => {
-    const txn = gemContract.methods
+    const txn = nftContract.methods
       .claimContractFunds()
       .send({ from: defaultAccount });
     getAssets();
@@ -86,7 +90,7 @@ const Profile = () => {
 
   useEffect(() => {
     try {
-      if (gemContract) {
+      if (nftContract) {
         getAssets();
         getTotalTokensMinted();
         // getContractBalance();
@@ -94,13 +98,13 @@ const Profile = () => {
     } catch (error) {
       console.log({ error });
     }
-  }, [gemContract, getAssets]);
+  }, [nftContract, getAssets]);
 
   const sellToken = async (tokenId, tokenValue) => {
-    const txn = await gemContract.methods
+    const txn = await nftContract.methods
       .sendTokenToMarket(tokenId, tokenValue)
       .send({ from: defaultAccount });
-      getAssets();
+    getAssets();
     return;
   };
 
@@ -125,7 +129,7 @@ const Profile = () => {
             <div className="contract-details">
               <div>Total tokens minted: {tokensLength}</div>
               <div>
-                Contract Address: {truncateAddress(contractAddress.GemNFT)}
+                Contract Address: {truncateAddress(contractAddress.MultaVerse)}
               </div>
               <div>
                 Total Funds in Contract:{" "}

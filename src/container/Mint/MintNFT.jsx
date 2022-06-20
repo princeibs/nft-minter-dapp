@@ -4,7 +4,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { toast } from "react-toastify";
 import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";
 import { uploadToIpfs } from "../../utils/minter";
-import { useGemContract } from "../../hooks";
+import { useNftContract } from "../../hooks";
 import BigNumber from "big-number/big-number";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/ui/Loader";
@@ -16,14 +16,14 @@ import { createNft } from "../../utils/minter";
 
 const MintNFT = () => {
   const [name, setName] = useState("");
-  const [gemValue, setGemValue] = useState(0);
+  const [nftValue, setNftValue] = useState(0);
   const [ipfsImage, setIpfsImage] = useState("");
   const [description, setDescription] = useState("");
   const [properties, setProperties] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const { performActions, address } = useContractKit();
-  const gemContract = useGemContract();
+  const nftContract = useNftContract();
   const navigate = useNavigate();
 
   // check if all form data has been filled
@@ -67,7 +67,7 @@ const MintNFT = () => {
     try {
       setLoading(true);
       // create an nft functionality
-      await createNft(gemContract, performActions, data);
+      await createNft(nftContract, performActions, data);
       toast(<NotificationSuccess text="Updating NFT list...." />);
       // getAssets()
       navigate("/");
@@ -112,14 +112,14 @@ const MintNFT = () => {
                 type="number"
                 placeholder="Value (how many coins is it worth?)"
                 onChange={(e) => {
-                  setGemValue(new BigNumber(e.target.value).toString());
+                  setNftValue(new BigNumber(e.target.value).toString());
                 }}
               />
             </FloatingLabel>
 
             <FloatingLabel
               controlId="inputDescription"
-              label="Gem description"
+              label="MetaVerse description"
               className="mb-3"
             >
               <Form.Control
@@ -206,7 +206,7 @@ const MintNFT = () => {
             onClick={() => {
               mint({
                 name,
-                gemValue,
+                nftValue,
                 ipfsImage,
                 description,
                 properties: properties,

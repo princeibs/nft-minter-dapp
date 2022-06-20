@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract GemNFT is ERC721URIStorage, Ownable {
+contract MultaVerse is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
     Counters.Counter public _marketTokensCount;
@@ -40,7 +40,7 @@ contract GemNFT is ERC721URIStorage, Ownable {
         bool claimed;
     }
 
-    constructor() ERC721("Gem Collection", "GEM") {
+    constructor() ERC721("MultaVerse", "MTV") {
         coinsBalance[msg.sender] = 100; // credit owner with 100 coins
     }
 

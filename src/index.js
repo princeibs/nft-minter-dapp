@@ -26,8 +26,8 @@ ReactDOM.render(
         chainId: 44787,
       }}
       dapp={{
-        name: "Gems Collection.",
-        description: "An NFT collection of rare gems.",
+        name: "MultaVerse.",
+        description: "A collection of rare multiverse NFTs",
         url: "https://example.com",
       }}
     >

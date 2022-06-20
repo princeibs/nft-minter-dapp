@@ -6,7 +6,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import Navigation from "./container/Navigation/Navigation";
 import Market from "./container/Market/Market";
 import Cover from "./components/Cover";
-import { useBalance, useGemContract } from "./hooks";
+import { useBalance, useNftContract } from "./hooks";
 import coverImg from "./assets/img/gem_img.jpg";
 import "./index.css";
 import "./App.scss";
@@ -23,15 +23,15 @@ const App = function AppWrapper() {
   const { getBalance } = useBalance();
 
   // initialize the NFT mint contract
-  const gemContract = useGemContract();
+  const nftContract = useNftContract();
 
   return (
     <div className="app__base">
       <Notification />
       {address ? (
         <>
-          <Navigation  gemContract={gemContract} />
-          <Market updateBalance={getBalance} gemContract={gemContract} />
+          <Navigation  nftContract={nftContract} />
+          <Market updateBalance={getBalance} nftContract={nftContract} />
         </>
       ) : (
         //  if user wallet is not connected display cover page

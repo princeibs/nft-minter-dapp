@@ -13,13 +13,13 @@ async function main() {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
-  const GemNFT = await hre.ethers.getContractFactory("GemNFT");
-  const gemNFT = await GemNFT.deploy();
+  const MultaVerse = await hre.ethers.getContractFactory("MultaVerse");
+  const multaVerse = await MultaVerse.deploy();
 
-  await gemNFT.deployed();
+  await multaVerse.deployed();
 
-  console.log("GemNFT deployed to:", gemNFT.address);
-  storeContractData(gemNFT);
+  console.log("MultaVerse deployed to:", multaVerse.address);
+  storeContractData(multaVerse);
 }
 
 function storeContractData(contract) {
@@ -31,15 +31,15 @@ function storeContractData(contract) {
   }
 
   fs.writeFileSync(
-    contractsDir + "/GemNFT-address.json",
-    JSON.stringify({ GemNFT: contract.address }, undefined, 2)
+    contractsDir + "/MultaVerse-address.json",
+    JSON.stringify({ MultaVerse: contract.address }, undefined, 2)
   );
 
-  const GemNFTArtifact = artifacts.readArtifactSync("GemNFT");
+  const MultaVerseArtifact = artifacts.readArtifactSync("MultaVerse");
 
   fs.writeFileSync(
-    contractsDir + "/GemNFT.json",
-    JSON.stringify(GemNFTArtifact, null, 2)
+    contractsDir + "/MultaVerse.json",
+    JSON.stringify(MultaVerseArtifact, null, 2)
   );
 }
 

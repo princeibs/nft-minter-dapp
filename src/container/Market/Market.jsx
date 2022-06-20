@@ -10,7 +10,7 @@ import { getNfts, fetchNftContractOwner } from "../../utils/minter";
 import "./Market.scss";
 import { ERC20_DECIMALS } from "../../utils/constants";
 
-const Market = ({ gemContract, updateBalance }) => {
+const Market = ({ nftContract, updateBalance }) => {
   /* performActions : used to run smart contract interactions in order
    *  address : fetch the address of the connected wallet
    */
@@ -27,7 +27,7 @@ const Market = ({ gemContract, updateBalance }) => {
       setLoading(true);
 
       // fetch all nfts from the smart contract
-      const allNfts = await getNfts(gemContract);
+      const allNfts = await getNfts(nftContract);
       if (!allNfts) return;
       setNfts(allNfts);
     } catch (error) {
@@ -35,38 +35,38 @@ const Market = ({ gemContract, updateBalance }) => {
     } finally {
       setLoading(false);
     }
-  }, [gemContract]);
+  }, [nftContract]);
 
-  const fetchContractOwner = useCallback(async (gemContract) => {
+  const fetchContractOwner = useCallback(async (nftContract) => {
     // get the address that deployed the NFT contract
-    const _address = await fetchNftContractOwner(gemContract);
+    const _address = await fetchNftContractOwner(nftContract);
     setNftOwner(_address);
   }, []);
 
   useEffect(() => {
     try {
-      if (address && gemContract) {
+      if (address && nftContract) {
         getAssets();
         updateBalance();
-        fetchContractOwner(gemContract);
+        fetchContractOwner(nftContract);
       }
     } catch (error) {
       console.log({ error });
     }
-  }, [gemContract, address, getAssets, fetchContractOwner]);
+  }, [nftContract, address, getAssets, fetchContractOwner]);
 
-  const buyToken = async (tokenId, gemValue) => {
+  const buyToken = async (tokenId, nftValue) => {
     let txn;
-    const coinsBalance = await gemContract.methods.getCoinsBalance().call();
-    const value = new BigNumber(gemValue / 100)
+    const coinsBalance = await nftContract.methods.getCoinsBalance().call();
+    const value = new BigNumber(nftValue / 100)
       .shiftedBy(ERC20_DECIMALS)
       .toString();
-    if (coinsBalance < gemValue) {
-      txn = await gemContract.methods
+    if (coinsBalance < nftValue) {
+      txn = await nftContract.methods
         .buyTokenWithFund(tokenId)
         .send({ from: defaultAccount, value: value });
     } else {
-      txn = await gemContract.methods
+      txn = await nftContract.methods
         .buyTokenWithCoins(tokenId)
         .send({ from: defaultAccount });
     }
@@ -110,12 +110,12 @@ const Market = ({ gemContract, updateBalance }) => {
 
 Market.propTypes = {
   // props passed into this component
-  gemContract: PropTypes.instanceOf(Object),
+  nftContract: PropTypes.instanceOf(Object),
   updateBalance: PropTypes.func.isRequired,
 };
 
 Market.defaultProps = {
-  gemContract: null,
+  nftContract: null,
 };
 
 export default Market;
