@@ -69,6 +69,7 @@ const MintNFT = () => {
       // create an nft functionality
       await createNft(gemContract, performActions, data);
       toast(<NotificationSuccess text="Updating NFT list...." />);
+      // getAssets()
       navigate("/");
     } catch (error) {
       console.log({ error });

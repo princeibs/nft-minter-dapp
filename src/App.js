@@ -35,7 +35,7 @@ const App = function AppWrapper() {
         </>
       ) : (
         //  if user wallet is not connected display cover page
-        <Cover name="Gem Collection" coverImg={coverImg} connect={connect} />
+        <Cover name="MultaVerse" coverImg={coverImg} connect={connect} />
       )}
     </div>
   );

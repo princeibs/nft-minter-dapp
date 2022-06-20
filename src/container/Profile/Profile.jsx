@@ -10,8 +10,9 @@ import "./Profile.scss";
 import BigNumber from "bignumber.js";
 import { formatBigNumber, truncateAddress } from "../../utils";
 
-const NftCard = ({ nft, btnText }) => {
+const NftCard = ({ nft, btnText, handleClick }) => {
   const { tokenId, seller, value, name, image, description, properties } = nft;
+  console.log(JSON.stringify(nft, null, 4));
   return (
     <div className="nft-card">
       <img src={image} />
@@ -27,7 +28,7 @@ const NftCard = ({ nft, btnText }) => {
         </div>
         <hr className="card-hr" />
         <div className="sell-nft">
-          <div className="sell-nft-btn">{btnText}</div>
+          <div onClick={() => handleClick(tokenId, value)} className="sell-nft-btn">{btnText}</div>
         </div>
       </div>
     </div>
@@ -80,12 +81,17 @@ const Profile = () => {
       if (gemContract) {
         getAssets();
         getTotalTokensMinted();
-        getContractBalance();
+        // getContractBalance();
       }
     } catch (error) {
       console.log({ error });
     }
   }, [gemContract, getAssets]);
+
+  const sellToken = async (tokenId, tokenValue) => {
+    const txn = await gemContract.methods.sendTokenToMarket(tokenId, tokenValue).send({from: defaultAccount});
+    return;
+  }
 
   return (
     <>
@@ -130,6 +136,7 @@ const Profile = () => {
                     ..._nft,
                   }}
                   btnText="Sell"
+                  handleClick = {sellToken}
                 />
               ))
             )}

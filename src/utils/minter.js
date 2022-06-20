@@ -95,10 +95,12 @@ export const getMyTokens = async (gemContract) => {
     const tokens = await Promise.all(
       res.map(async (tokenId) => {
         const tokenUri = await gemContract.methods.tokenURI(tokenId).call();
+        const value = await gemContract.methods.marketTokens(tokenId).call();
         const meta = await fetchNftMeta(tokenUri);
         return {
           tokenId: Number(tokenId),
           name: meta.data.name,
+          value: value.value,
           image: meta.data.image,
           description: meta.data.description,
           properties: meta.data.properties,

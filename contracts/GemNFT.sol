@@ -12,7 +12,7 @@ contract GemNFT is ERC721URIStorage, Ownable {
     Counters.Counter public _marketTokensCount;
     Counters.Counter public _marketTokensSold;
 
-    mapping(uint256 => MarketToken) private marketTokens;
+    mapping(uint256 => MarketToken) public marketTokens;
     mapping(address => uint256) private coinsBalance;
     mapping(address => uint256) private usersPurchaseCount;
 
@@ -178,7 +178,7 @@ contract GemNFT is ERC721URIStorage, Ownable {
         MarketToken[] memory allMarketTokens = new MarketToken[](
             unclaimedTokensCount
         );
-        for (uint256 i = 0; i < _marketTokensCount.current(); ) {
+        for (uint256 i = 0; i < _tokenIdCounter.current(); ) {
             if (tokenInMarket(i)) {
                 allMarketTokens[index] = marketTokens[i];
                 index++;
