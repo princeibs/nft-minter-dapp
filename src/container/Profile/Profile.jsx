@@ -5,7 +5,7 @@ import { useGemContract, useBalance } from "../../hooks";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import contractAddress from "../../contracts/GemNFT-address.json";
 import Loader from "../../components/ui/Loader";
-import { getMyTokens } from "../../utils/minter";
+import { getMyTokens, getNfts } from "../../utils/minter";
 import "./Profile.scss";
 import BigNumber from "bignumber.js";
 import { formatBigNumber, truncateAddress } from "../../utils";
@@ -28,7 +28,12 @@ const NftCard = ({ nft, btnText, handleClick }) => {
         </div>
         <hr className="card-hr" />
         <div className="sell-nft">
-          <div onClick={() => handleClick(tokenId, value)} className="sell-nft-btn">{btnText}</div>
+          <div
+            onClick={() => handleClick(tokenId, value)}
+            className="sell-nft-btn"
+          >
+            {btnText}
+          </div>
         </div>
       </div>
     </div>
@@ -40,6 +45,7 @@ const Profile = () => {
   const [tokensLength, setTokensLength] = useState(0);
   const [contractBalance, setContractBalance] = useState(0);
   const [nfts, setNfts] = useState([]);
+  const [marketTokens, setMarketTokens] = useState([]);
   const gemContract = useGemContract();
   const { celoBalance, coinsBalance } = useBalance();
   const { kit } = useContractKit();
@@ -50,8 +56,10 @@ const Profile = () => {
       setLoading(true);
       // fetch all nfts from the smart contract
       const allNfts = await getMyTokens(gemContract);
-      if (!allNfts) return;
+      const allMarketTokens = await getNfts(gemContract);
+      if (!(allNfts && allMarketTokens)) return;
       setNfts(allNfts);
+      setMarketTokens(allMarketTokens);
     } catch (error) {
       console.log({ error });
     } finally {
@@ -89,24 +97,26 @@ const Profile = () => {
   }, [gemContract, getAssets]);
 
   const sellToken = async (tokenId, tokenValue) => {
-    const txn = await gemContract.methods.sendTokenToMarket(tokenId, tokenValue).send({from: defaultAccount});
+    const txn = await gemContract.methods
+      .sendTokenToMarket(tokenId, tokenValue)
+      .send({ from: defaultAccount });
+      getAssets();
     return;
-  }
+  };
 
   return (
     <>
       <Navigation />
       {!loading ? (
         <div className="app__profile">
-          {/* <div className="app__profile-subtitle">In Market</div>
-          <hr className="hr__class" /> */}
-          {/* <div className="app__profile-subtitle">Out of Market</div> */}
           <div className="app__profile-profile">
             <div className="profile-image">
               <Identicon address={defaultAccount} size={110} />
             </div>
             <div className="profile-info">
-              <div className="profle-address">User: {truncateAddress(defaultAccount)}</div>
+              <div className="profle-address">
+                User: {truncateAddress(defaultAccount)}
+              </div>
               <hr></hr>
               <div>CELO: {formatBigNumber(celoBalance.CELO)}</div>
               <div>cUSD: {formatBigNumber(celoBalance.cUSD)}</div>
@@ -120,11 +130,37 @@ const Profile = () => {
               <div>
                 Total Funds in Contract:{" "}
                 {formatBigNumber(new BigNumber(contractBalance))} CELO{" "}
-                <span className="profile-claim-btn" onClick={() => claimContractFunds()}>Claim</span>
+                <span
+                  className="profile-claim-btn"
+                  onClick={() => claimContractFunds()}
+                >
+                  Claim
+                </span>
               </div>
             </div>
           </div>
           <hr className="hr__class" />
+          <div className="app__profile-subtitle">In Market</div>
+          {marketTokens.length === 0 ? (
+            <div className="no-nft-msg">
+              You don't have any NFT in market currently
+            </div>
+          ) : (
+            marketTokens
+              .filter((mkt) => mkt.seller == defaultAccount)
+              .map((nft) => (
+                <NftCard
+                  key={nft.tokenId}
+                  nft={{
+                    ...nft,
+                  }}
+                  btnText=""
+                  handleClick={sellToken}
+                />
+              ))
+          )}
+          <hr className="hr__class" />
+          <div className="app__profile-subtitle">Out of Market</div>
           <div className="my-nfts">
             {nfts.length === 0 ? (
               <div className="no-nft-msg">No NFT to display at the moment</div>
@@ -136,7 +172,7 @@ const Profile = () => {
                     ..._nft,
                   }}
                   btnText="Sell"
-                  handleClick = {sellToken}
+                  handleClick={sellToken}
                 />
               ))
             )}

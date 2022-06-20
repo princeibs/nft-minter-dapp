@@ -125,6 +125,7 @@ contract GemNFT is ERC721URIStorage, Ownable {
         );
 
         coinsBalance[msg.sender] -= marketTokens[tokenId].value;
+        coinsBalance[marketTokens[tokenId].seller] += marketTokens[tokenId].value;
         buyToken(tokenId, msg.sender);
         usersPurchaseCount[msg.sender]++;
 
