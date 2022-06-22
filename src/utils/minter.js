@@ -59,9 +59,7 @@ export const uploadToIpfs = async (e) => {
 // fetch all NFTs on the smart contract
 export const getNfts = async (nftContract) => {
   try {
-    console.log("before call ...");
     const data = await nftContract.methods.getAllMarketTokens().call();
-    console.log("len -> " + data.length);
     const tokens = await Promise.all(
       data.map(async (token) => {
         const tokenUri = await nftContract.methods
@@ -105,12 +103,10 @@ export const getMyTokens = async (nftContract) => {
           properties: meta.data.properties,
         };
       })
-    );
-    console.log("mytkns -> " + JSON.stringify(tokens, null, 4))
+    );    
     return tokens;
   } catch (e) {
-    console.log("getmytokensErr -> " + e);
-    console.log("errrrrrrrrrr")
+    console.log(e);
   }
 };
 

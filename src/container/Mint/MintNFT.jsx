@@ -84,7 +84,7 @@ const MintNFT = () => {
       {/* Modal */}
       <Modal show={true} centered>
         <Modal.Header>
-          <Modal.Title>Mint new GEM</Modal.Title>
+          <Modal.Title>Mint new MultaVerse</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -96,7 +96,7 @@ const MintNFT = () => {
             >
               <Form.Control
                 type="text"
-                placeholder="Name of GEM"
+                placeholder="Name of MultaVerse"
                 onChange={(e) => {
                   setName(e.target.value);
                 }}
@@ -143,37 +143,37 @@ const MintNFT = () => {
                 }
                 setIpfsImage(imageUrl);
               }}
-              placeholder="GEM Image"
+              placeholder="MultaVerse Image"
             ></Form.Control>
 
             <Form.Label>
-              <h5>GEM Properties</h5>
+              <h5>MultaVerse Properties</h5>
             </Form.Label>
 
             <FloatingLabel
               controlId="inputLocation"
-              label="Color"
+              label="Age"
               className="mb-3"
             >
               <Form.Control
                 type="text"
-                placeholder="Color of GEM"
+                placeholder="Age of MultaVerse"
                 onChange={(e) => {
-                  handleSetProperties(e, "color");
+                  handleSetProperties(e, "age");
                 }}
               />
             </FloatingLabel>
 
             <FloatingLabel
               controlId="inputLocation"
-              label="Hardness (in lbs)"
+              label="Distance (in Light Years)"
               className="mb-3"
             >
               <Form.Control
                 type="number"
-                placeholder="Hardness of GEM"
+                placeholder="Distance to MultiVerse"
                 onChange={(e) => {
-                  handleSetProperties(e, "hardness");
+                  handleSetProperties(e, "distance");
                 }}
               />
             </FloatingLabel>
@@ -185,7 +185,7 @@ const MintNFT = () => {
             >
               <Form.Control
                 type="text"
-                placeholder="Source of supply"
+                placeholder="Source of MultaVerse"
                 onChange={(e) => {
                   handleSetProperties(e, "source");
                 }}
@@ -196,9 +196,9 @@ const MintNFT = () => {
 
         <Modal.Footer>
           {/* <Link to="/"> */}
-            <Button variant="outline-secondary" onClick={handleClose}>
-              Cancel
-            </Button>
+          <Button variant="outline-secondary" onClick={handleClose}>
+            Cancel
+          </Button>
           {/* </Link> */}
           <Button
             variant="dark"

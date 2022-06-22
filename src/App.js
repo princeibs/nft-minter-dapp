@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect, useCallback} from "react";
 
 import { Notification } from "./components/ui/Notifications";
 import { useContractKit } from "@celo-tools/use-contractkit";
@@ -7,11 +7,13 @@ import Navigation from "./container/Navigation/Navigation";
 import Market from "./container/Market/Market";
 import Cover from "./components/Cover";
 import { useBalance, useNftContract } from "./hooks";
-import coverImg from "./assets/img/gem_img.jpg";
+import coverImg from "./assets/img/galaxies.jpg";
+import { fetchNftContractOwner } from "./utils/minter";
 import "./index.css";
 import "./App.scss";
 
 const App = function AppWrapper() {
+  const [nftOwner, setNftOwner] = useState()
   /*
     address : fetch the connected wallet address
     destroy: terminate connection to user wallet
@@ -25,12 +27,28 @@ const App = function AppWrapper() {
   // initialize the NFT mint contract
   const nftContract = useNftContract();
 
+  const fetchContractOwner = useCallback(async (nftContract) => {
+    // get the address that deployed the NFT contract
+    const _address = await fetchNftContractOwner(nftContract);
+    setNftOwner(_address);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (address && nftContract) {
+        fetchContractOwner(nftContract);
+      }
+    } catch (error) {
+      console.log({ error });
+    }
+  }, [nftContract, address, fetchContractOwner]);
+
   return (
     <div className="app__base">
       <Notification />
       {address ? (
-        <>
-          <Navigation  nftContract={nftContract} />
+        <>        
+          <Navigation owner={nftOwner}/>
           <Market updateBalance={getBalance} nftContract={nftContract} />
         </>
       ) : (

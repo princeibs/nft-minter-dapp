@@ -5,6 +5,17 @@
   border-color: blue;
   width: 100%;
   height: auto;
+  color: white;
+  min-height: 100vh;
+  background-image: url(../../assets/img/galaxies.jpg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  z-index: -10;
+  padding-top: 7rem;
+
+  @media screen and (max-width: 500px) {
+   padding-top: 15rem;
+  }
 }
 
 .app__market-title {

@@ -5,17 +5,20 @@ import { useNftContract, useBalance } from "../../hooks";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import contractAddress from "../../contracts/MultaVerse-address.json";
 import Loader from "../../components/ui/Loader";
-import { getMyTokens, getNfts } from "../../utils/minter";
+import {
+  getMyTokens,
+  getNfts,
+  fetchNftContractOwner,
+} from "../../utils/minter";
 import "./Profile.scss";
 import BigNumber from "bignumber.js";
 import { formatBigNumber, truncateAddress } from "../../utils";
 
 const NftCard = ({ nft, btnText, handleClick }) => {
-  const { tokenId, seller, value, name, image, description, properties } = nft;
-  console.log(JSON.stringify(nft, null, 4));
+  const { tokenId, value, name, image, description, properties } = nft;
   return (
     <div className="nft-card">
-      <img src={image} />
+      <img alt="nft-preview" src={image} />
       <div className="nft-details">
         <div className="nft-title">
           {name} (<span>#{tokenId}</span>)
@@ -54,6 +57,7 @@ const Profile = () => {
   const { celoBalance, coinsBalance } = useBalance();
   const { kit } = useContractKit();
   const { defaultAccount } = kit;
+  const [nftOwner, setNftOwner] = useState();
 
   const getAssets = useCallback(async () => {
     try {
@@ -88,12 +92,19 @@ const Profile = () => {
     getAssets();
   };
 
+  const fetchContractOwner = useCallback(async (nftContract) => {
+    // get the address that deployed the NFT contract
+    const _address = await fetchNftContractOwner(nftContract);
+    setNftOwner(_address);
+  }, [defaultAccount]);
+
   useEffect(() => {
     try {
       if (nftContract) {
         getAssets();
         getTotalTokensMinted();
-        // getContractBalance();
+        fetchContractOwner(nftContract);
+        nftOwner == defaultAccount && getContractBalance();
       }
     } catch (error) {
       console.log({ error });
@@ -101,16 +112,15 @@ const Profile = () => {
   }, [nftContract, getAssets]);
 
   const sellToken = async (tokenId, tokenValue) => {
-    const txn = await nftContract.methods
+    await nftContract.methods
       .sendTokenToMarket(tokenId, tokenValue)
       .send({ from: defaultAccount });
     getAssets();
-    return;
   };
 
   return (
     <>
-      <Navigation />
+      <Navigation owner={nftOwner} />
       {!loading ? (
         <div className="app__profile">
           <div className="app__profile-profile">
@@ -126,45 +136,55 @@ const Profile = () => {
               <div>cUSD: {formatBigNumber(celoBalance.cUSD)}</div>
               <div>Coins: {coinsBalance}</div>
             </div>
-            <div className="contract-details">
-              <div>Total tokens minted: {tokensLength}</div>
-              <div>
-                Contract Address: {truncateAddress(contractAddress.MultaVerse)}
+            {nftOwner == defaultAccount && (
+              <div className="contract-details">
+                <div>Total tokens minted: {tokensLength}</div>
+                <div>
+                  Contract Address:{" "}
+                  {truncateAddress(contractAddress.MultaVerse)}
+                </div>
+                <div>
+                  Total Funds in Contract:{" "}
+                  {formatBigNumber(new BigNumber(contractBalance))} CELO{" "}
+                  <span
+                    className="profile-claim-btn"
+                    onClick={() => claimContractFunds()}
+                  >
+                    Claim
+                  </span>
+                </div>
               </div>
-              <div>
-                Total Funds in Contract:{" "}
-                {formatBigNumber(new BigNumber(contractBalance))} CELO{" "}
-                <span
-                  className="profile-claim-btn"
-                  onClick={() => claimContractFunds()}
-                >
-                  Claim
-                </span>
-              </div>
-            </div>
+            )}
           </div>
-          <hr className="hr__class" />
-          <div className="app__profile-subtitle">In Market</div>
-          {marketTokens.length === 0 ? (
-            <div className="no-nft-msg">
-              You don't have any NFT in market currently
-            </div>
-          ) : (
-            marketTokens
-              .filter((mkt) => mkt.seller == defaultAccount)
-              .map((nft) => (
-                <NftCard
-                  key={nft.tokenId}
-                  nft={{
-                    ...nft,
-                  }}
-                  btnText=""
-                  handleClick={sellToken}
-                />
-              ))
-          )}
-          <hr className="hr__class" />
-          <div className="app__profile-subtitle">Out of Market</div>
+
+          <div className="app__profile-subtitle">
+            In Market
+            <hr className="hr__class" />
+          </div>
+
+          <div className="my-nfts">
+            {marketTokens.length === 0 ? (
+              <div className="no-nft-msg">No NFT to display at the moment</div>
+            ) : (
+              marketTokens
+                .filter((mkt) => mkt.seller == defaultAccount)
+                .map((nft) => (
+                  <NftCard
+                    key={nft.tokenId}
+                    nft={{
+                      ...nft,
+                    }}
+                    btnText=""
+                    handleClick={sellToken}
+                  />
+                ))
+            )}
+          </div>
+
+          <div className="app__profile-subtitle">
+            Out of Market
+            <hr className="hr__class" />
+          </div>
           <div className="my-nfts">
             {nfts.length === 0 ? (
               <div className="no-nft-msg">No NFT to display at the moment</div>

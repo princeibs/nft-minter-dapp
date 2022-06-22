@@ -106,6 +106,8 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         buyToken(tokenId, msg.sender);
         usersPurchaseCount[msg.sender]++;
 
+        /// TODO: transfer `msg.value` to the token seller after successful purchase
+
         // reward buyer with 100 points for every 5 purchase
         uint256 purchaseCount = usersPurchaseCount[msg.sender];
         if ((purchaseCount > 0) && (purchaseCount % 5 == 0)) {

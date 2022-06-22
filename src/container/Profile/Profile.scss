@@ -1,5 +1,12 @@
 .app__profile {
-  min-height: 85vh;
+  min-height: 100vh;
+  padding-top: 7rem;
+  color: white;
+  background-color: #10001d;
+
+  @media screen and (max-width: 500px) {
+   padding-top: 12rem;
+  }
 }
 
 .app__profile-profile {
@@ -13,6 +20,10 @@
 
   &>div {
     margin: 0 2.5rem;
+  }
+
+  @media screen and (max-width: 500px) {
+    flex-wrap: wrap;    
   }
 }
 
@@ -34,16 +45,17 @@
 
 .app__profile-subtitle {
   font-size: 1.5rem;
-  margin-left: 1rem;
+  margin-left: 4rem;
+  // border: solid 1px ;
 }
 
 .hr__class {
-  width: 90vw;
-  margin: auto;
+
 }
 
 .my-nfts {
   margin: 3rem;
+  margin-bottom: 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;

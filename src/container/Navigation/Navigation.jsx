@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -6,7 +6,7 @@ import { useBalance } from "../../hooks";
 import Wallet from "../../components/wallet/Wallet";
 import "./Navigation.scss";
 
-const Navigation = () => {
+const Navigation = ({ owner }) => {
   /*
     address : fetch the connected wallet address
     destroy: terminate connection to user wallet
@@ -14,6 +14,7 @@ const Navigation = () => {
      */
 
   const { address, destroy, kit } = useContractKit();
+  const { defaultAccount } = kit;
 
   //  fetch user's celo balance using hook
   const { celoBalance, coinsBalance } = useBalance();
@@ -31,9 +32,11 @@ const Navigation = () => {
         <div className="app__nav-item">
           <Link to="/profile">Profile</Link>
         </div>
-        <div className="app__nav-item mint-btn">
-          <Link to="/mint">Mint</Link>
-        </div>
+        {owner == defaultAccount && (
+          <div className="app__nav-item mint-btn">
+            <Link to="/mint">Mint</Link>
+          </div>
+        )}
       </div>
       <Nav className="app__nav-more">
         <Nav.Item>
