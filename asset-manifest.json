@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/nft-minter-dapp/static/css/main.85f3f6dc.chunk.css",
+    "main.js": "/nft-minter-dapp/static/js/main.0676e8ff.chunk.js",
+    "main.js.map": "/nft-minter-dapp/static/js/main.0676e8ff.chunk.js.map",
+    "runtime-main.js": "/nft-minter-dapp/static/js/runtime-main.9a8ad746.js",
+    "runtime-main.js.map": "/nft-minter-dapp/static/js/runtime-main.9a8ad746.js.map",
+    "static/css/2.437670fc.chunk.css": "/nft-minter-dapp/static/css/2.437670fc.chunk.css",
+    "static/js/2.fdaf1590.chunk.js": "/nft-minter-dapp/static/js/2.fdaf1590.chunk.js",
+    "static/js/2.fdaf1590.chunk.js.map": "/nft-minter-dapp/static/js/2.fdaf1590.chunk.js.map",
+    "static/js/3.4d8b6ce6.chunk.js": "/nft-minter-dapp/static/js/3.4d8b6ce6.chunk.js",
+    "static/js/3.4d8b6ce6.chunk.js.map": "/nft-minter-dapp/static/js/3.4d8b6ce6.chunk.js.map",
+    "index.html": "/nft-minter-dapp/index.html",
+    "static/css/2.437670fc.chunk.css.map": "/nft-minter-dapp/static/css/2.437670fc.chunk.css.map",
+    "static/css/main.85f3f6dc.chunk.css.map": "/nft-minter-dapp/static/css/main.85f3f6dc.chunk.css.map",
+    "static/js/2.fdaf1590.chunk.js.LICENSE.txt": "/nft-minter-dapp/static/js/2.fdaf1590.chunk.js.LICENSE.txt",
+    "static/media/bootstrap-icons.css": "/nft-minter-dapp/static/media/bootstrap-icons.f2539a50.woff2",
+    "static/media/Cover.scss": "/nft-minter-dapp/static/media/galaxies.2e273832.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9a8ad746.js",
+    "static/css/2.437670fc.chunk.css",
+    "static/js/2.fdaf1590.chunk.js",
+    "static/css/main.85f3f6dc.chunk.css",
+    "static/js/main.0676e8ff.chunk.js"
+  ]
+}
