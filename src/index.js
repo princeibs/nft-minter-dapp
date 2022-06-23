@@ -12,7 +12,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
 import "react-toastify/dist/ReactToastify.min.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 ReactDOM.render(
   <React.StrictMode>
