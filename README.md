@@ -37,6 +37,14 @@ Check the live demo [here](https://princeibs.github.io/nft-minter-dapp/)
 5. Buy 4 more NFT and get rewarded with 100 coins
 6. Buy 1 more NFT from the market and watch the coins deducted instead of your Celo balance.
 
+### View your NFT from your MetaMask wallet
+![0x_multaverse](https://user-images.githubusercontent.com/64266194/175487601-9bb2c973-36ad-486e-9746-6fa629dd3614.png)
+1. Open your MetaMask wallet. Please ensure you are on the Celo (alfajores testnet)
+2. Scroll to the bottom of the wallet and click on `import tokens`
+3. Enter `0xb03dCfb014C746d6A53De6d99bD967661cDCFd44` on the field labelled `Token Contract Address`
+4. The token symbol will be automatically prefilled. Enter `0` as the token decimal. 
+5. Click on the Add button to add token and you can now see `MTV` token among your assets.
+
 ## Project Setup
 ### Install dependencies
 `npm install`
