@@ -23,11 +23,6 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         _;
     }
 
-    modifier onlyAdmin() {
-        require(msg.sender == admin);
-        _;
-    }
-
     event TokenMinted(address indexed creator, uint256 tokenId);
     event BuyToken(uint256 tokenId);
     event ClaimContractFunds();
@@ -49,7 +44,6 @@ contract MultaVerse is ERC721URIStorage, Ownable {
 
     constructor() ERC721("MultaVerse", "MTV") {
         coinsBalance[msg.sender] = 100; // credit owner with 100 coins
-        admin = msg.sender; // admin is deployer of contract
     }
 
     // create a MarketToken
