@@ -33,9 +33,9 @@ ReactDOM.render(
     >
       <Router>
         <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/mint" element={<MintNFT /> } />
+          <Route path="/" exact={true} element={<App />} />
+          <Route path="/profile" exact={true} element={<Profile />} />
+          <Route path="/mint" exact={true} element={<MintNFT /> } />
         </Routes>
       </Router>
     </ContractKitProvider>

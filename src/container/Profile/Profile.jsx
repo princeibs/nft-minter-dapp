@@ -13,6 +13,8 @@ import {
 import "./Profile.scss";
 import BigNumber from "bignumber.js";
 import { formatBigNumber, truncateAddress } from "../../utils";
+import MintNFT from "../Mint/MintNFT";
+import {Button} from "react-bootstrap";
 
 const NftCard = ({ nft, btnText, handleClick }) => {
   const { tokenId, value, name, image, description, properties } = nft;
@@ -53,6 +55,7 @@ const Profile = () => {
   const [contractBalance, setContractBalance] = useState(0);
   const [nfts, setNfts] = useState([]);
   const [marketTokens, setMarketTokens] = useState([]);
+  const [showMint, setShowMint] = useState(false);
   const nftContract = useNftContract();
   const { celoBalance, coinsBalance } = useBalance();
   const { kit } = useContractKit();
@@ -135,6 +138,7 @@ const Profile = () => {
               <div>CELO: {formatBigNumber(celoBalance.CELO)}</div>
               <div>cUSD: {formatBigNumber(celoBalance.cUSD)}</div>
               <div>Coins: {coinsBalance}</div>
+              <Button  variant={'dark'} onClick={ () => setShowMint(true)}>Mint Token</Button>
             </div>
             {nftOwner == defaultAccount && (
               <div className="contract-details">
@@ -201,6 +205,11 @@ const Profile = () => {
               ))
             )}
           </div>
+          {
+            showMint && (
+                  <MintNFT closeModal={()=>{setShowMint(false)}} />)
+          }
+
         </div>
       ) : (
         <Loader />

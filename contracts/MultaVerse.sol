@@ -12,12 +12,19 @@ contract MultaVerse is ERC721URIStorage, Ownable {
     Counters.Counter public _marketTokensCount;
     Counters.Counter public _marketTokensSold;
 
+    address public admin;
+
     mapping(uint256 => MarketToken) public marketTokens;
     mapping(address => uint256) private coinsBalance;
     mapping(address => uint256) private usersPurchaseCount;
 
     modifier isOwner(uint256 tokenId) {
         require(msg.sender == ownerOf(tokenId));
+        _;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin);
         _;
     }
 
@@ -42,6 +49,7 @@ contract MultaVerse is ERC721URIStorage, Ownable {
 
     constructor() ERC721("MultaVerse", "MTV") {
         coinsBalance[msg.sender] = 100; // credit owner with 100 coins
+        admin = msg.sender; // admin is deployer of contract
     }
 
     // create a MarketToken
@@ -212,9 +220,27 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         emit ClaimContractFunds();
     }
 
+    // claim certain amount of funds
+    function claimSomeContractFunds(uint256 _amount) public payable onlyOwner {
+        require(_amount <= contractBalance(), "insufficient funds to withdraw");
+        payable(msg.sender).transfer(_amount);
+        emit ClaimContractFunds();
+    }
+
+
     // return count of total tokens minted
     function getTokensLength() public view returns (uint256) {
         return _tokenIdCounter.current();
+    }
+
+    // buy coins from the contract
+    function buyCoins(uint256 _amount) public payable {
+        require(_amount > 0, "amount too low");
+        require(
+            msg.value >= _amount * (1 ether / 100),
+            "funds not enough for purchase"
+        );
+        coinsBalance[msg.sender] += _amount;
     }
 
     receive() external payable {}
