@@ -14,7 +14,7 @@ import {
 } from "../../components/ui/Notifications";
 import { createNft } from "../../utils/minter";
 
-const MintNFT = () => {
+const MintNFT = ({closeModal}) => {
   const [name, setName] = useState("");
   const [nftValue, setNftValue] = useState(0);
   const [ipfsImage, setIpfsImage] = useState("");
@@ -33,7 +33,8 @@ const MintNFT = () => {
   // close the popup modal
   const handleClose = () => {
     setProperties([]);
-    navigate("/");
+    // navigate("/");
+    closeModal()
   };
 
   // add an attribute to an NFT
