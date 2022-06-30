@@ -5,19 +5,36 @@ pragma solidity >=0.8.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-contract MultaVerse is ERC721URIStorage, Ownable {
+contract MultaVerse is ERC721URIStorage, Ownable, IERC721Receiver {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
     Counters.Counter public _marketTokensCount;
     Counters.Counter public _marketTokensSold;
+    Counters.Counter public _coinsOnSale;
+
+    uint256 coinSupply;
+    uint256 coinsAvailable;
 
     mapping(uint256 => MarketToken) public marketTokens;
+    mapping(uint256 => TradeCoin) public coinsOnSale;
+
+    // amount of coins put on sale by wallet
+    mapping(address => uint256) public unavailableCoins;
     mapping(address => uint256) private coinsBalance;
+    // keeps track of elements in coinsOnSale that have been bought/cancelled
+    mapping(uint256 => bool) public soldCoins;
     mapping(address => uint256) private usersPurchaseCount;
 
+    // keeps tracks of NFTs owned by wallet
+    mapping(address => uint256[]) private walletOwnedTokens;
+
     modifier isOwner(uint256 tokenId) {
-        require(msg.sender == ownerOf(tokenId));
+        require(
+            msg.sender == ownerOf(tokenId),
+            "Only the owner of the NFT is allowed to perform this action"
+        );
         _;
     }
 
@@ -40,8 +57,14 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         bool claimed;
     }
 
+    struct TradeCoin {
+        address trader;
+        uint256 amount;
+    }
+
     constructor() ERC721("MultaVerse", "MTV") {
         coinsBalance[msg.sender] = 100; // credit owner with 100 coins
+        coinSupply = 10000;
     }
 
     // create a MarketToken
@@ -71,7 +94,7 @@ contract MultaVerse is ERC721URIStorage, Ownable {
     {
         createMarketToken(tokenId, tokenValue);
         _marketTokensCount.increment();
-        _transfer(msg.sender, address(this), tokenId);
+        safeTransferFrom(msg.sender, address(this), tokenId);
     }
 
     // mint a new token
@@ -80,14 +103,88 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         onlyOwner
     {
         require(tokenValue > 0, "token value too low");
+        require(bytes(tokenURI).length > 7, "Invalid tokenURI");
         uint256 newTokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-
+        walletOwnedTokens[msg.sender].push(newTokenId);
         _safeMint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
 
         sendTokenToMarket(newTokenId, tokenValue);
         emit TokenMinted(msg.sender, newTokenId);
+    }
+
+    function verifyPurchaseCount() private {
+        require(coinsAvailable >= 100, "No more coins available to claim");
+        // reward buyer with 100 points for every 5 purchase
+        uint256 purchaseCount = usersPurchaseCount[msg.sender];
+        if ((purchaseCount > 0) && (purchaseCount % 5 == 0)) {
+            coinsBalance[msg.sender] += 100;
+            coinsAvailable -= 100;
+        }
+    }
+
+    // function to remove tokens sold by owner from walletOwnedTokens
+    function removeOwnedToken(uint256 tokenId, address user) private {
+        uint256 ownedCount = walletOwnedTokens[user].length;
+        walletOwnedTokens[user][tokenId] = walletOwnedTokens[user][
+            ownedCount - 1
+        ];
+        walletOwnedTokens[user].pop();
+    }
+
+    // allows user to put their coins on sale
+    function tradeCoins(uint256 _amount) public {
+        require(_amount > 0, "Invalid amount");
+        require(
+            coinsBalance[msg.sender] >= _amount,
+            "Not enough coins to sell"
+        );
+        coinsOnSale[_coinsOnSale.current()] = TradeCoin(msg.sender, _amount);
+        unavailableCoins[msg.sender] += _amount;
+        coinsBalance[msg.sender] -= _amount;
+    }
+
+    // allow user to cancel an instance of TradeCoin and retrieve back their coins
+    function unTradeCoins(uint256 _tradeCoinId) public {
+        require(!soldCoins[_tradeCoinId], "Query of non existent coins sale");
+        require(
+            _tradeCoinId < _coinsOnSale.current(),
+            "Query of invalid TraderCoin"
+        );
+        require(
+            coinsOnSale[_tradeCoinId].trader == msg.sender,
+            "Not coins owner"
+        );
+        uint256 amount = coinsOnSale[_tradeCoinId].amount;
+        coinsOnSale[_tradeCoinId].amount = 0;
+        unavailableCoins[msg.sender] -= amount;
+        coinsBalance[msg.sender] += amount;
+
+        coinsOnSale[_tradeCoinId].trader = address(0);
+        soldCoins[_tradeCoinId] = true;
+    }
+
+    // allows user to buy coins from other users
+    function buyCoins(uint256 _tradeCoinId) public payable {
+        require(!soldCoins[_tradeCoinId], "Query of non existent coins sale");
+        require(
+            msg.value == (coinsOnSale[_tradeCoinId].amount * 0.01 ether),
+            "Insufficient funds"
+        );
+        address payable seller = payable(coinsOnSale[_tradeCoinId].trader);
+        require(
+            seller != msg.sender,
+            "Untrade your coins if you want them back"
+        );
+        uint256 amount = coinsOnSale[_tradeCoinId].amount;
+        coinsOnSale[_tradeCoinId].amount = 0;
+        coinsBalance[msg.sender] += amount;
+        unavailableCoins[seller] -= amount;
+        coinsOnSale[_tradeCoinId].trader = address(0);
+
+        (bool sent, ) = seller.call{value: msg.value}("");
+        require(sent, "Transfer failed");
     }
 
     // buy token with ether
@@ -98,7 +195,7 @@ contract MultaVerse is ERC721URIStorage, Ownable {
             "seller cannot buy own token"
         );
         require(
-            msg.value >= cost * (1 ether / 100),
+            msg.value == cost * (1 ether / 100),
             "funds not enough for purchase"
         );
         // 1 coin == 1/100 ether
@@ -107,12 +204,7 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         usersPurchaseCount[msg.sender]++;
 
         /// TODO: transfer `msg.value` to the token seller after successful purchase
-
-        // reward buyer with 100 points for every 5 purchase
-        uint256 purchaseCount = usersPurchaseCount[msg.sender];
-        if ((purchaseCount > 0) && (purchaseCount % 5 == 0)) {
-            coinsBalance[msg.sender] += 100;
-        }
+        verifyPurchaseCount();
     }
 
     // buy token with funds
@@ -127,23 +219,22 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         );
 
         coinsBalance[msg.sender] -= marketTokens[tokenId].value;
-        coinsBalance[marketTokens[tokenId].seller] += marketTokens[tokenId].value;
+        coinsBalance[marketTokens[tokenId].seller] += marketTokens[tokenId]
+            .value;
         buyToken(tokenId, msg.sender);
         usersPurchaseCount[msg.sender]++;
 
-        // reward buyer with 100 points for every 5 purchase
-        uint256 purchaseCount = usersPurchaseCount[msg.sender];
-        if ((purchaseCount > 0) && (purchaseCount % 5 == 0)) {
-            coinsBalance[msg.sender] += 100;
-        }
+        verifyPurchaseCount();
     }
 
     // buy token from market
     function buyToken(uint256 tokenId, address newOwner) private {
+        removeOwnedToken(tokenId, marketTokens[tokenId].seller);
         marketTokens[tokenId].claimed = true;
         marketTokens[tokenId].owner = payable(newOwner);
         marketTokens[tokenId].seller = payable(address(0));
 
+        walletOwnedTokens[marketTokens[tokenId].seller].push(tokenId);
         _marketTokensSold.increment();
         _transfer(address(this), newOwner, tokenId);
 
@@ -152,18 +243,7 @@ contract MultaVerse is ERC721URIStorage, Ownable {
 
     // get all tokens user owns
     function getMyTokens() public view returns (uint256[] memory) {
-        uint256 index;
-        uint256 totalTokensCount = _tokenIdCounter.current();
-        uint256[] memory myTokens = new uint256[](balanceOf(msg.sender));
-
-        for (uint256 i = 0; i < totalTokensCount; ) {
-            if (ownerOf(i) == msg.sender) {
-                myTokens[index] = i;
-                index++;
-            }
-            ++i;
-        }
-        return myTokens;
+        return walletOwnedTokens[msg.sender];
     }
 
     // return if `tokenId` is not in market
@@ -208,13 +288,23 @@ contract MultaVerse is ERC721URIStorage, Ownable {
 
     // claim contract funds
     function claimContractFunds() public payable onlyOwner {
-        payable(msg.sender).transfer(contractBalance());
+        (bool sent, ) = payable(msg.sender).call{value: contractBalance()}("");
+        require(sent, "Funds withdrawal from contract balance failed");
         emit ClaimContractFunds();
     }
 
     // return count of total tokens minted
     function getTokensLength() public view returns (uint256) {
         return _tokenIdCounter.current();
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return bytes4(this.onERC721Received.selector);
     }
 
     receive() external payable {}

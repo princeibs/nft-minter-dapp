@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { toast } from "react-toastify";
 import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";

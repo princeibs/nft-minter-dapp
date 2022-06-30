@@ -86,7 +86,7 @@ const Profile = () => {
   };
 
   const claimContractFunds = async () => {
-    const txn = nftContract.methods
+    await nftContract.methods
       .claimContractFunds()
       .send({ from: defaultAccount });
     getAssets();
@@ -104,7 +104,7 @@ const Profile = () => {
         getAssets();
         getTotalTokensMinted();
         fetchContractOwner(nftContract);
-        nftOwner == defaultAccount && getContractBalance();
+        nftOwner === defaultAccount && getContractBalance();
       }
     } catch (error) {
       console.log({ error });
@@ -136,7 +136,7 @@ const Profile = () => {
               <div>cUSD: {formatBigNumber(celoBalance.cUSD)}</div>
               <div>Coins: {coinsBalance}</div>
             </div>
-            {nftOwner == defaultAccount && (
+            {nftOwner === defaultAccount && (
               <div className="contract-details">
                 <div>Total tokens minted: {tokensLength}</div>
                 <div>
@@ -167,7 +167,7 @@ const Profile = () => {
               <div className="no-nft-msg">No NFT to display at the moment</div>
             ) : (
               marketTokens
-                .filter((mkt) => mkt.seller == defaultAccount)
+                .filter((mkt) => mkt.seller === defaultAccount)
                 .map((nft) => (
                   <NftCard
                     key={nft.tokenId}
