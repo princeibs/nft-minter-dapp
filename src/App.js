@@ -20,10 +20,7 @@ const App = function AppWrapper() {
      */
   const { address, connect } = useContractKit();
 
-  //issues
-  // balance doesn't update after buying something
-  // you don't see coins amount
-  // No celo price until wallet pops up
+
 
 
   //  fetch user's celo balance using hook
