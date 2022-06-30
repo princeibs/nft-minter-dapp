@@ -9,7 +9,6 @@ import Cover from "./components/Cover";
 import { useBalance, useNftContract } from "./hooks";
 import coverImg from "./assets/img/galaxies.jpg";
 import { fetchNftContractOwner } from "./utils/minter";
-import "./index.css";
 import "./App.scss";
 
 const App = function AppWrapper() {
@@ -20,6 +19,9 @@ const App = function AppWrapper() {
     connect : connect to the celo blockchain
      */
   const { address, connect } = useContractKit();
+
+
+
 
   //  fetch user's celo balance using hook
   const { getBalance } = useBalance();

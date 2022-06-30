@@ -62,6 +62,6 @@
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
     "gh-pages": "^4.0.0",
-    "hardhat": "^2.8.2"
+    "hardhat": "^2.9.9"
   }
 }

@@ -12,7 +12,7 @@ const NftCard = ({ nft, buyToken }) => {
   return (
     <>
       <div className="nft-card">
-        <img src={image} />
+        <img src={image} alt="" />
         <div className="nft-details">
           <div className="nft-title">
             {name} (<span>#{tokenId}</span>)
@@ -30,11 +30,11 @@ const NftCard = ({ nft, buyToken }) => {
           <div className="buy-nft">
             <div className="nft-cost">
               <span>
-                <img src={coinImg} />
+                <img src={coinImg} alt="" />
               </span>
               {value}
             </div>
-            {seller == defaultAccount ? (
+            {seller === defaultAccount ? (
               <div>Owned</div>
             ) : (
               <div
