@@ -115,10 +115,9 @@ contract MultaVerse is ERC721URIStorage, Ownable, IERC721Receiver {
     }
 
     function verifyPurchaseCount() private {
-        require(coinsAvailable >= 100, "No more coins available to claim");
         // reward buyer with 100 points for every 5 purchase
         uint256 purchaseCount = usersPurchaseCount[msg.sender];
-        if ((purchaseCount > 0) && (purchaseCount % 5 == 0)) {
+        if ((purchaseCount > 0) && (purchaseCount % 5 == 0) && coinsAvailable >= 100) {
             coinsBalance[msg.sender] += 100;
             coinsAvailable -= 100;
         }
