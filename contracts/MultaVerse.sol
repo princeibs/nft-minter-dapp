@@ -77,7 +77,6 @@ contract MultaVerse is ERC721URIStorage, Ownable {
     // mint a new token
     function mintToken(string calldata tokenURI, uint256 tokenValue)
         public
-        onlyOwner
     {
         require(tokenValue > 0, "token value too low");
         uint256 newTokenId = _tokenIdCounter.current();
@@ -103,10 +102,12 @@ contract MultaVerse is ERC721URIStorage, Ownable {
         );
         // 1 coin == 1/100 ether
 
+        address payable seller = marketTokens[tokenId].seller;
         buyToken(tokenId, msg.sender);
         usersPurchaseCount[msg.sender]++;
 
-        /// TODO: transfer `msg.value` to the token seller after successful purchase
+        // transfer `cost` to the token seller after successful purchase        
+        seller.transfer(msg.value);
 
         // reward buyer with 100 points for every 5 purchase
         uint256 purchaseCount = usersPurchaseCount[msg.sender];

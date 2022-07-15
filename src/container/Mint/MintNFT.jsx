@@ -71,6 +71,7 @@ const MintNFT = () => {
       toast(<NotificationSuccess text="Updating NFT list...." />);
       // getAssets()
       navigate("/");
+      window.location.reload();
     } catch (error) {
       console.log({ error });
       toast(<NotificationError text="Failed to create an NFT." />);

@@ -32,11 +32,9 @@ const Navigation = ({ owner }) => {
         <div className="app__nav-item">
           <Link to="/profile">Profile</Link>
         </div>
-        {owner == defaultAccount && (
-          <div className="app__nav-item mint-btn">
-            <Link to="/mint">Mint</Link>
-          </div>
-        )}
+        <div className="app__nav-item mint-btn">
+          <Link to="/mint">Mint</Link>
+        </div>
       </div>
       <Nav className="app__nav-more">
         <Nav.Item>
