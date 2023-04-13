@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/nft-minter-dapp/static/css/main.85f3f6dc.chunk.css",
-    "main.js": "/nft-minter-dapp/static/js/main.ab30993c.chunk.js",
-    "main.js.map": "/nft-minter-dapp/static/js/main.ab30993c.chunk.js.map",
+    "main.js": "/nft-minter-dapp/static/js/main.6f5fcf56.chunk.js",
+    "main.js.map": "/nft-minter-dapp/static/js/main.6f5fcf56.chunk.js.map",
     "runtime-main.js": "/nft-minter-dapp/static/js/runtime-main.f4b1048a.js",
     "runtime-main.js.map": "/nft-minter-dapp/static/js/runtime-main.f4b1048a.js.map",
     "static/css/2.437670fc.chunk.css": "/nft-minter-dapp/static/css/2.437670fc.chunk.css",
@@ -22,6 +22,6 @@
     "static/css/2.437670fc.chunk.css",
     "static/js/2.aa995643.chunk.js",
     "static/css/main.85f3f6dc.chunk.css",
-    "static/js/main.ab30993c.chunk.js"
+    "static/js/main.6f5fcf56.chunk.js"
   ]
 }
