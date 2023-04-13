@@ -1,8 +1,25 @@
-import { create as ipfsHttpClient } from "ipfs-http-client";
 import axios from "axios";
+import { Web3Storage } from "web3.storage/dist/bundle.esm.min.js";
+import Web3 from "web3";
 
-// initialize IPFS
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+
+const client = new Web3Storage({
+  token: process.env.REACT_APP_WEB3_STORAGE_API_KEY
+});
+
+const web3 = new Web3();
+
+// Remove whitespaces characters from name
+const formatName = (name) => {
+  return encodeURI(name)
+}
+
+// Convert data to object file
+const convertObjectToFile = (data) => {
+  const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+  const files = [new File([blob], `${data.name}.json`)];
+  return files;
+} 
 
 // mint an NFT
 export const createNft = async (
@@ -15,24 +32,23 @@ export const createNft = async (
     const { defaultAccount } = kit;
 
     // convert NFT metadata to JSON format
-    const data = JSON.stringify({
+    const data = {
       name,
       description,
       image: ipfsImage,
       owner: defaultAccount,
       properties,
-    });
+    };
 
     try {
-      // save NFT metadata to IPFS
-      const added = await client.add(data);
-
-      // IPFS url for uploaded metadata
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+        const fileName = formatName(name)
+        const files = convertObjectToFile(data);
+        const result = await client.put(files)
+        const tokenUri = `https://${result}.ipfs.w3s.link/${fileName}.json`;
 
       // mint the NFT and save the IPFS url to the blockchain
       let transaction = await nftContract.methods
-        .mintToken(url, nftValue)
+        .mintToken(tokenUri, nftValue)
         .send({ from: defaultAccount });
 
       return transaction;
@@ -44,16 +60,18 @@ export const createNft = async (
 
 // function to upload a file to IPFS
 export const uploadToIpfs = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  e.preventDefault();
   try {
-    const added = await client.add(file, {
-      progress: (prog) => console.log(`received: ${prog}`),
-    });
-    return `https://ipfs.infura.io/ipfs/${added.path}`;
-  } catch (error) {
-    console.log("Error uploading file: ", error);
-  }
+    const files = e.target.files
+    const file = files[0];
+    const fileName = file.name;
+    const imageName = formatName(fileName);
+    const cid = await client.put(files)
+    const url = `https://${cid}.ipfs.w3s.link/${imageName}`
+    return url
+} catch (e) {
+  console.log("Failed to upload image to ipfs: " + e)
+}
 };
 
 // fetch all NFTs on the smart contract
@@ -114,9 +132,7 @@ export const getMyTokens = async (nftContract) => {
 export const fetchNftMeta = async (ipfsUrl) => {
   try {
     if (!ipfsUrl) return null;
-    // console.log("Before axios -> " + ipfsUrl);
     const meta = await axios.get(ipfsUrl);
-    // console.log("After axios -> " + meta);
     return meta;
   } catch (e) {
     console.log({ e });

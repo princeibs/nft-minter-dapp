@@ -35,6 +35,9 @@ const Navigation = ({ owner }) => {
         <div className="app__nav-item mint-btn">
           <Link to="/mint">Mint</Link>
         </div>
+        <div className="app__nav-item">
+          <a href="https://github.com/princeibs/nft-minter-dapp/blob/main/README.md">Help</a>
+        </div>
       </div>
       <Nav className="app__nav-more">
         <Nav.Item>
